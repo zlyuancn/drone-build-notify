@@ -9,6 +9,9 @@ steps:
   - name: publish
     image: plugins/docker
     pull: if-not-exists
+    volumes:
+      - name: docker-sock
+        path: /var/run/docker.sock
     settings:
       auto_tag: true
       repo: zlyuan/drone-build-notify
@@ -16,3 +19,8 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
+
+volumes:
+  - name: docker-sock
+    host:
+      path: /var/run/docker.sock
