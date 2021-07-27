@@ -6,15 +6,6 @@ clone:
   depth: 1
 
 steps:
-  - name: build
-    image: golang
-    pull: if-not-exists
-    environment:
-      GOPROXY: https://goproxy.cn,https://goproxy.io,direct
-      CGO_ENABLED: 0
-    commands:
-      - go build .
-
   - name: publish
     image: plugins/docker
     pull: if-not-exists
