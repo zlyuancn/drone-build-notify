@@ -45,7 +45,7 @@ type ApprovalData struct {
 
 func init() {
 	ctx, cancel := context.WithCancel(context.Background())
-	defaultApproval := &approval{
+	defaultApproval = &approval{
 		baseCtx:       ctx,
 		baseCtxCancel: cancel,
 		approvalData:  make(map[uint32]*ApprovalData, 8),
