@@ -7,6 +7,8 @@ import (
 	"github.com/drone/drone-go/plugin/webhook"
 	jsoniter "github.com/json-iterator/go"
 
+	"github.com/zlyuancn/drone-build-notify/approval"
+	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
 	"github.com/zlyuancn/drone-build-notify/message"
 	"github.com/zlyuancn/drone-build-notify/notifer"
@@ -30,6 +32,14 @@ func (p *plugin) Deliver(ctx context.Context, req *webhook.Request) error {
 	msg, err := message.MakeMsg(req)
 	if err != nil {
 		logger.Log.Error(err)
+	}
+
+	// 如果是 开始 并且 对某些分支使用了审批 并且 没有匹配审批的分支
+	if msg.Status == "start" && config.Config.UseApprovalBranch != "" && msg.MatchApprovalBranches() {
+		err := approval.Approval(msg.RepoName, msg.TaskNum, true)
+		if err != nil {
+			logger.Log.Errorf("自动审批不匹配的分支失败: %v", err)
+		}
 	}
 
 	msgText, _ := jsoniter.MarshalIndent(msg, "", "    ")

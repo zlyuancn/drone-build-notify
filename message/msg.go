@@ -139,6 +139,21 @@ func MakeMsg(req *webhook.Request) (*Msg, error) {
 	return msg, nil
 }
 
+// 是否匹配审批分支
+func (m *Msg) MatchApprovalBranches() bool {
+	if config.Config.UseApprovalBranch == "" {
+		return false
+	}
+
+	branches := strings.Split(config.Config.UseApprovalBranch, ",")
+	for _, branch := range branches {
+		if m.Branch == branch {
+			return true
+		}
+	}
+	return false
+}
+
 // 构建储存库基础url(储存库的url地址)
 func makeRepoBaseUrl(repoUrl string) string {
 	return strings.TrimSuffix(repoUrl, ".git")

@@ -27,9 +27,9 @@ var Config struct {
 	NotifyRetry     int    `env:"NOTIFY_RETRY"`      // 通告失败重试次数
 	OffCreateNotify bool   `env:"OFF_CREATE_NOTIFY"` // 关闭创建动作的通告
 
-	UseApproval      bool   `env:"USE_APPROVAL"`      // 使用审批, AdvertiseAddress和DroneUserToken不能为空
-	AdvertiseAddress string `env:"ADVERTISE_ADDRESS"` // 公告地址, 如: http://notify.drone.example.com
-	DroneUserToken   string `env:"DRONE_USER_TOKEN"`  // drone用户token
+	UseApprovalBranch string `env:"USE_APPROVAL_BRANCH"` // 使用审批的分支, 多个分支用英文逗号隔开, AdvertiseAddress和DroneUserToken不能为空
+	AdvertiseAddress  string `env:"ADVERTISE_ADDRESS"`   // 公告地址, 如: http://notify.drone.example.com
+	DroneUserToken    string `env:"DRONE_USER_TOKEN"`    // drone用户token
 
 	DingtalkAccessToken     string `env:"DINGTALK_ACCESSTOKEN"`    // 钉钉access_token
 	DingtalkSecret          string `env:"DINGTALK_SECRET"`         // 钉钉secret
@@ -60,7 +60,7 @@ func Init() {
 	if Config.DingtalkEndTemplateFile == "" {
 		Config.DingtalkEndTemplateFile = "./conf/dingtask_end_template.md"
 	}
-	if Config.UseApproval {
+	if Config.UseApprovalBranch != "" {
 		if Config.AdvertiseAddress == "" || Config.DroneUserToken == "" {
 			logger.Log.Fatal("如果使用审批, AdvertiseAddress和DroneUserToken不能为空")
 		}
