@@ -1,4 +1,4 @@
-# 用于接收drone构建信息的webhook, 并将构建信息推送到钉钉
+# 用于接收drone构建信息的webhook, 并将构建信息推送到钉钉, 支持构建审批
 
 # 更新你的 Drone 服务配置
 
@@ -14,6 +14,7 @@ $ openssl rand -hex 16
 ```
 
 # docker-compose
+
 ```yaml
 version: '3'
 services:
@@ -79,3 +80,15 @@ services:
 | commit_msg     |       提交信息       |
 | commit_id      |        提交id        |
 | commit_url     |  提交信息的跳转url   |
+
+# 构建审批
+
+1. 修改以下环境变量. 注: 用户token可以在 drone 的页面上找到
+   ```
+   USE_APPROVAL = true
+   ADVERTISE_ADDRESS = drone-build-notify的web地址
+   DRONE_USER_TOKEN = 用户token
+   ```
+
+2. 修改使用管理员用户登录 drone, 在 drone 的构建库设置中勾选 `Protected`. 注: 如果不是管理员用户, 你将看不见 `Protected` 选项
+3. 重新运行 `drone-build-notify`. 如果是 docker-compose 可以使用 `docker-compose up -d drone-build-notify`
