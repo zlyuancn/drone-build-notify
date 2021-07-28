@@ -67,7 +67,6 @@ func Init() {
 			return
 		}
 
-		_, _ = w.Write([]byte("ok"))
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 	})
 }
