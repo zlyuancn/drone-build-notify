@@ -84,7 +84,7 @@ func (m *DingtalkNotifer) makeDingtalkMsg(msg *message.Msg) *robot.Msg {
 		},
 	}
 
-	if config.Config.UseApproval {
+	if msg.Status == "start" && config.Config.UseApproval {
 		const ApprovalUrl = `{@endpoint}/approval?repos={@repos}&build_id={@build_id}&allow={@allow}`
 		buttons = append(buttons, robot.Button{
 			Title: "允许构建",

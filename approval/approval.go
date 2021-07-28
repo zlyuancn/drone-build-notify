@@ -62,7 +62,7 @@ func Init() {
 		}
 		_ = resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			_, _ = w.Write([]byte(fmt.Sprintf("got err http status code: %v", resp.StatusCode)))
 			return
 		}
