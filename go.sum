@@ -43,8 +43,9 @@ github.com/zlyuancn/zretry v0.0.0-20191213040511-788c138dac36 h1:oMJPQPTGY75/SZk
 github.com/zlyuancn/zretry v0.0.0-20191213040511-788c138dac36/go.mod h1:nXpt3JELMAirMyc5KExlSX96ixpohjHkxHpJlhqRnUU=
 github.com/zlyuancn/zsignal v0.0.0-20200102070656-631fe600ecd4 h1:pJbp0U8P+VKfYo/BbcUh8j1tMEUclxqPdl1ZFAEFaLk=
 github.com/zlyuancn/zsignal v0.0.0-20200102070656-631fe600ecd4/go.mod h1:JMMXCa/YBNw6bLNf5j18VgMO9Ghit1IfuOeNs7wio5k=
-github.com/zlyuancn/zstr v0.0.0-20200415024527-2c50cec3b400 h1:oVlgRDaFKIWvr2V0lFCvj9xE7SMzYtXiIYmo3afTRYs=
 github.com/zlyuancn/zstr v0.0.0-20200415024527-2c50cec3b400/go.mod h1:gcWCwemINH4jJeg+sXWMf45IAWc/fSn4rZ38eW2zqI8=
+github.com/zlyuancn/zstr v0.0.0-20210706054158-d9a941fa4bbb h1:53AdM/hpmZkY5W4x6emB6SOrQXXcpIPeVAWOAmeO6hw=
+github.com/zlyuancn/zstr v0.0.0-20210706054158-d9a941fa4bbb/go.mod h1:gcWCwemINH4jJeg+sXWMf45IAWc/fSn4rZ38eW2zqI8=
 go.uber.org/atomic v1.6.0 h1:Ezj3JGmsOnG1MoRWQkPBsKLe9DwWD9QeXzTRzzldNVk=
 go.uber.org/atomic v1.6.0/go.mod h1:sABNBOSYdrvTF6hTgEIbc7YasKWGhgEQZyfxyTvoXHQ=
 go.uber.org/multierr v1.5.0 h1:KCa4XfM8CWFCpxXRGok+Q0SS/0XBhMDbHHGABQLvD2A=

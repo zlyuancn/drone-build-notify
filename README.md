@@ -35,20 +35,23 @@ services:
 
 # 环境变量说明
 
-| 变量名                  |  类型  |             默认值              |              说明               |   示例   |
-| ----------------------- | :----: | :-----------------------------: | :-----------------------------: | :------: |
-| DRONE_BIND              | string |               :80               |          服务监听地址           |   :80    |
-| DRONE_DEBUG             |  bool  |              false              |     调试模式,会输出额外信息     |  false   |
-| *DRONE_SERVER           | string |                                 |          drone服务地址          |
-| *DRONE_WEBHOOK_SECRET   | string |                                 |           webhook秘钥           |
-| LOG_PATH                | string |                                 | 日志文件输出目录,不需要预先创建 |
-| NOTIFER                 | string |                                 | 通告者,多个通告者用半角逗号隔开 | dingtalk |
-| NOTIFY_RETRY            |  int   |                2                |        通告失败重试次数         |    2     |
-| OFF_CREATE_NOTIFY       |  bool  |              false              |       关闭创建动作的通告        |  false   |
-| DINGTALK_ACCESSTOKEN    | string |                                 |  dingtalk通告者的access_token   |
-| DINGTALK_SECRET         | string |                                 |     dingtalk通告者的secret      |
-| DINGTALK_START_TEMPLATE | string | conf/dingtask_start_template.md |    钉钉消息任务开始模板文件     |
-| DINGTALK_END_TEMPLATE   | string |  conf/dingtask_end_template.md  |    钉钉消息任务结束模板文件     |
+| 变量名                  |  类型  |             默认值              |                        说明                        |              示例               |
+| ----------------------- | :----: | :-----------------------------: | :------------------------------------------------: | :-----------------------------: |
+| DRONE_BIND              | string |               :80               |                    服务监听地址                    |               :80               |
+| DRONE_DEBUG             |  bool  |              false              |              调试模式,会输出额外信息               |              false              |
+| *DRONE_SERVER           | string |                                 |                   drone服务地址                    |
+| *DRONE_WEBHOOK_SECRET   | string |                                 |                    webhook秘钥                     |
+| LOG_PATH                | string |                                 |          日志文件输出目录,不需要预先创建           |
+| NOTIFER                 | string |                                 |          通告者,多个通告者用半角逗号隔开           |            dingtalk             |
+| NOTIFY_RETRY            |  int   |                2                |                  通告失败重试次数                  |                2                |
+| OFF_CREATE_NOTIFY       |  bool  |              false              |                 关闭创建动作的通告                 |              false              |
+| USE_APPROVAL            |  bool  |              false              | 使用审批, AdvertiseAddress和DroneUserToken不能为空 |                                 |
+| ADVERTISE_ADDRESS       | string |                                 |                      公告地址                      | http://notify.drone.example.com |
+| DRONE_USER_TOKEN        | string |                                 |                   drone用户token                   |                                 |
+| DINGTALK_ACCESSTOKEN    | string |                                 |            dingtalk通告者的access_token            |
+| DINGTALK_SECRET         | string |                                 |               dingtalk通告者的secret               |
+| DINGTALK_START_TEMPLATE | string | conf/dingtask_start_template.md |              钉钉消息任务开始模板文件              |
+| DINGTALK_END_TEMPLATE   | string |  conf/dingtask_end_template.md  |              钉钉消息任务结束模板文件              |
 
 # 模板语法
 

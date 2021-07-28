@@ -9,4 +9,5 @@ require (
 	github.com/zlyuancn/zenvconf v0.0.0-20200521064154-7b5e8b6a8771
 	github.com/zlyuancn/zlog v0.0.0-20200510075342-5831b7d2f6c6
 	github.com/zlyuancn/zsignal v0.0.0-20200102070656-631fe600ecd4
+	github.com/zlyuancn/zstr v0.0.0-20210706054158-d9a941fa4bbb
 )

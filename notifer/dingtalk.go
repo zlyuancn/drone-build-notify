@@ -12,8 +12,10 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 
 	"github.com/zlyuancn/zdingtalk/robot"
+	"github.com/zlyuancn/zstr"
 
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
@@ -80,6 +82,27 @@ func (m *DingtalkNotifer) makeDingtalkMsg(msg *message.Msg) *robot.Msg {
 			Title:     "任务构建信息",
 			ActionURL: msg.TaskUrl,
 		},
+	}
+
+	if config.Config.UseApproval {
+		const ApprovalUrl = `{@endpoint}/approval?repos={@repos}&build_id={@build_id}&allow={@allow}`
+		buttons = append(buttons, robot.Button{
+			Title: "允许构建",
+			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
+				"endpoint": config.Config.AdvertiseAddress,
+				"build_id": msg.TaskNum,
+				"repos":    url.QueryEscape(msg.RepoName),
+				"allow":    "true",
+			}),
+		}, robot.Button{
+			Title: "取消构建",
+			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
+				"endpoint": config.Config.AdvertiseAddress,
+				"build_id": msg.TaskNum,
+				"repos":    url.QueryEscape(msg.RepoName),
+				"allow":    "false",
+			}),
+		})
 	}
 	return robot.NewCustomCard(title, text, buttons...).HorizontalButton()
 }

@@ -7,6 +7,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/zlyuancn/zsignal"
 
+	"github.com/zlyuancn/drone-build-notify/approval"
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
 	"github.com/zlyuancn/drone-build-notify/notifer"
@@ -31,6 +32,7 @@ func main() {
 	)
 
 	http.Handle("/", handler)
+	approval.Init()
 	logger.Log.Info("服务启动: ", config.Config.Bind)
 
 	server := &http.Server{Addr: config.Config.Bind}
