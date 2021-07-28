@@ -47,6 +47,7 @@ services:
 | NOTIFY_RETRY            |  int   |                2                |                                  通告失败重试次数                                  |                2                |
 | OFF_CREATE_NOTIFY       |  bool  |              false              |                                 关闭创建动作的通告                                 |              false              |
 | USE_APPROVAL_BRANCH     | string |                                 | 使用审批的分支, 多个分支用英文逗号隔开<br>AdvertiseAddress和DroneUserToken不能为空 |             master              |
+| APPROVAL_TIMEOUT        |  int   |               120               |                                      审批超时                                      |                                 |
 | ADVERTISE_ADDRESS       | string |                                 |                                      公告地址                                      | http://notify.drone.example.com |
 | DRONE_USER_TOKEN        | string |                                 |                                   drone用户token                                   |                                 |
 | DINGTALK_ACCESSTOKEN    | string |                                 |                            dingtalk通告者的access_token                            |

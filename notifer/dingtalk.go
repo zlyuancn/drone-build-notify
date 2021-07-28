@@ -12,11 +12,11 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/url"
 
 	"github.com/zlyuancn/zdingtalk/robot"
 	"github.com/zlyuancn/zstr"
 
+	"github.com/zlyuancn/drone-build-notify/approval"
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
 	"github.com/zlyuancn/drone-build-notify/message"
@@ -85,22 +85,23 @@ func (m *DingtalkNotifer) makeDingtalkMsg(msg *message.Msg) *robot.Msg {
 	}
 
 	if msg.Status == "start" && msg.MatchApprovalBranches() {
-		const ApprovalUrl = `{@endpoint}/approval?repos={@repos}&build_id={@build_id}&allow={@allow}`
+		approvalData := approval.NewApproval(msg.RepoName, msg.TaskNum)
+		const ApprovalUrl = `{@endpoint}/approval?approval_id={@approval_id}&verify_code={@verify_code}&allow={@allow}`
 		buttons = append(buttons, robot.Button{
 			Title: "允许构建",
 			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
-				"endpoint": config.Config.AdvertiseAddress,
-				"build_id": msg.TaskNum,
-				"repos":    url.QueryEscape(msg.RepoName),
-				"allow":    "true",
+				"endpoint":    config.Config.AdvertiseAddress,
+				"approval_id": approvalData.ID,
+				"verify_code": approvalData.VerifyCode,
+				"allow":       "true",
 			}),
 		}, robot.Button{
 			Title: "取消构建",
 			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
-				"endpoint": config.Config.AdvertiseAddress,
-				"build_id": msg.TaskNum,
-				"repos":    url.QueryEscape(msg.RepoName),
-				"allow":    "false",
+				"endpoint":    config.Config.AdvertiseAddress,
+				"approval_id": approvalData.ID,
+				"verify_code": approvalData.VerifyCode,
+				"allow":       "false",
 			}),
 		})
 	}

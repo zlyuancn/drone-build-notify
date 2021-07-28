@@ -14,6 +14,8 @@ import (
 	"github.com/zlyuancn/drone-build-notify/logger"
 )
 
+const defaultApprovalTimeout = 120 // 审批超时, 单位秒
+
 var Config struct {
 	Bind  string `env:"DRONE_BIND"`  // bind端口
 	Debug bool   `env:"DRONE_DEBUG"` // debug模式
@@ -28,6 +30,7 @@ var Config struct {
 	OffCreateNotify bool   `env:"OFF_CREATE_NOTIFY"` // 关闭创建动作的通告
 
 	UseApprovalBranch string `env:"USE_APPROVAL_BRANCH"` // 使用审批的分支, 多个分支用英文逗号隔开, AdvertiseAddress和DroneUserToken不能为空
+	ApprovalTimeout   int    `env:"APPROVAL_TIMEOUT"`    // 审批超时, 单位秒
 	AdvertiseAddress  string `env:"ADVERTISE_ADDRESS"`   // 公告地址, 如: http://notify.drone.example.com
 	DroneUserToken    string `env:"DRONE_USER_TOKEN"`    // drone用户token
 
@@ -64,5 +67,8 @@ func Init() {
 		if Config.AdvertiseAddress == "" || Config.DroneUserToken == "" {
 			logger.Log.Fatal("如果使用审批, AdvertiseAddress和DroneUserToken不能为空")
 		}
+	}
+	if Config.ApprovalTimeout <= 0 {
+		Config.ApprovalTimeout = defaultApprovalTimeout
 	}
 }
