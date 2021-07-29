@@ -49,6 +49,7 @@ func (b *Build) CheckStatus() {
 	if b.BuildStatus == BuildApprovalTimeout {
 		b.Msg.Status = MsgApprovalTimeout
 		b.Msg.StatusDesc = "审批超时"
+		b.Msg.StatusPicUrl = makeStatusPicUrl(MsgApprovalTimeout)
 		return
 	}
 
