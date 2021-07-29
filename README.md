@@ -1,5 +1,7 @@
 # 用于接收drone构建信息的webhook, 并将构建信息推送到钉钉, 支持指定多选分支进行构建审批
 
+![avatar](https://raw.githubusercontent.com/zlyuancn/drone-build-notify/master/assets/notify.png)
+
 # 更新你的 Drone 服务配置
 
 ```text
