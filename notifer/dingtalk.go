@@ -19,7 +19,7 @@ import (
 	"github.com/zlyuancn/drone-build-notify/approval"
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
-	"github.com/zlyuancn/drone-build-notify/message"
+	"github.com/zlyuancn/drone-build-notify/model"
 	"github.com/zlyuancn/drone-build-notify/template"
 )
 
@@ -63,14 +63,14 @@ func (m *DingtalkNotifer) Name() NotifierType {
 	return DingtalkNotifier
 }
 
-func (m *DingtalkNotifer) Notify(msg *message.Msg) error {
+func (m *DingtalkNotifer) Notify(msg *model.Msg) error {
 	if m.dt == nil {
 		return errors.New("未创建DingTalk实例")
 	}
 	return m.dt.Send(m.makeDingtalkMsg(msg), config.Config.NotifyRetry)
 }
 
-func (m *DingtalkNotifer) makeDingtalkMsg(msg *message.Msg) *robot.Msg {
+func (m *DingtalkNotifer) makeDingtalkMsg(msg *model.Msg) *robot.Msg {
 	title := fmt.Sprintf("[%s] #%d %s", msg.StatusDesc, msg.TaskNum, msg.RepoName)
 	text := m.makeContext(msg)
 	buttons := []robot.Button{
@@ -108,7 +108,7 @@ func (m *DingtalkNotifer) makeDingtalkMsg(msg *message.Msg) *robot.Msg {
 	return robot.NewCustomCard(title, text, buttons...).HorizontalButton()
 }
 
-func (m *DingtalkNotifer) makeContext(msg *message.Msg) string {
+func (m *DingtalkNotifer) makeContext(msg *model.Msg) string {
 	if msg.Status == "start" {
 		return template.Render(dingtalkStartTemplate, msg)
 	}

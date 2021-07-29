@@ -15,7 +15,7 @@ import (
 
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
-	"github.com/zlyuancn/drone-build-notify/message"
+	"github.com/zlyuancn/drone-build-notify/model"
 )
 
 type NotifierType string
@@ -25,15 +25,15 @@ const (
 )
 
 var notifiers []INotifier
-var notifyTask chan *message.Msg
+var notifyTask chan *model.Msg
 
 type INotifier interface {
 	Name() NotifierType
-	Notify(msg *message.Msg) error
+	Notify(msg *model.Msg) error
 }
 
 func Init() {
-	notifyTask = make(chan *message.Msg, 100)
+	notifyTask = make(chan *model.Msg, 100)
 	zsignal.RegisterOnShutdown(func() {
 		close(notifyTask)
 	})
@@ -59,7 +59,7 @@ func Init() {
 	}
 }
 
-func notify(msg *message.Msg) {
+func notify(msg *model.Msg) {
 	if config.Config.OffCreateNotify && msg.Status == "start" {
 		logger.Log.Debug("跳过动作的公告: ", msg.Status)
 		return
@@ -72,6 +72,6 @@ func notify(msg *message.Msg) {
 	}
 }
 
-func Notify(msg *message.Msg) {
+func Notify(msg *model.Msg) {
 	notifyTask <- msg
 }

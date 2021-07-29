@@ -6,7 +6,7 @@
 -------------------------------------------------
 */
 
-package message
+package model
 
 import (
 	"errors"

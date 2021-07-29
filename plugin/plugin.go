@@ -10,12 +10,11 @@ import (
 	"github.com/zlyuancn/drone-build-notify/approval"
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
-	"github.com/zlyuancn/drone-build-notify/message"
+	"github.com/zlyuancn/drone-build-notify/model"
 	"github.com/zlyuancn/drone-build-notify/notifer"
 )
 
-type plugin struct {
-}
+type plugin struct{}
 
 func New() webhook.Plugin {
 	return &plugin{}
@@ -29,7 +28,7 @@ func (p *plugin) Deliver(ctx context.Context, req *webhook.Request) error {
 		return nil
 	}
 
-	msg, err := message.MakeMsg(req)
+	msg, err := model.MakeMsg(req)
 	if err != nil {
 		logger.Log.Error(err)
 	}
