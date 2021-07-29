@@ -85,22 +85,22 @@ func (m *DingtalkNotifer) makeDingtalkMsg(msg *model.Msg) *robot.Msg {
 	}
 
 	if msg.Status == "start" && msg.MatchApprovalBranches() {
-		approvalData := approval.NewApproval(msg.RepoName, msg.TaskNum)
+		approval := approval.NewApproval(msg.RepoName, msg.TaskNum)
 		const ApprovalUrl = `{@endpoint}/approval?approval_id={@approval_id}&verify_code={@verify_code}&allow={@allow}`
 		buttons = append(buttons, robot.Button{
 			Title: "允许构建",
 			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
 				"endpoint":    config.Config.AdvertiseAddress,
-				"approval_id": approvalData.ID,
-				"verify_code": approvalData.VerifyCode,
+				"approval_id": approval.ID(),
+				"verify_code": approval.VerifyCode(),
 				"allow":       "true",
 			}),
 		}, robot.Button{
 			Title: "取消构建",
 			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
 				"endpoint":    config.Config.AdvertiseAddress,
-				"approval_id": approvalData.ID,
-				"verify_code": approvalData.VerifyCode,
+				"approval_id": approval.ID(),
+				"verify_code": approval.VerifyCode(),
 				"allow":       "false",
 			}),
 		})
