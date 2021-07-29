@@ -25,22 +25,22 @@ const (
 )
 
 var notifiers []INotifier
-var notifyTask chan *model.Msg
+var notifyTask chan *model.Build
 
 type INotifier interface {
 	Name() NotifierType
-	Notify(msg *model.Msg) error
+	Notify(msg *model.Build) error
 }
 
 func Init() {
-	notifyTask = make(chan *model.Msg, 100)
+	notifyTask = make(chan *model.Build, 100)
 	zsignal.RegisterOnShutdown(func() {
 		close(notifyTask)
 	})
 
 	go func() {
-		for msg := range notifyTask {
-			notify(msg)
+		for b := range notifyTask {
+			notify(b)
 		}
 	}()
 
@@ -59,19 +59,19 @@ func Init() {
 	}
 }
 
-func notify(msg *model.Msg) {
-	if config.Config.OffCreateNotify && msg.Status == "start" {
-		logger.Log.Debug("跳过动作的公告: ", msg.Status)
+func notify(b *model.Build) {
+	if config.Config.OffCreateNotify && b.BuildStatus == model.BuildStart {
+		logger.Log.Debug("跳过创建build通知")
 		return
 	}
 
 	for _, notifier := range notifiers {
-		if err := notifier.Notify(msg); err != nil {
+		if err := notifier.Notify(b); err != nil {
 			logger.Log.Warnf("通告者<%s>失败: %s", notifier.Name(), err.Error())
 		}
 	}
 }
 
-func Notify(msg *model.Msg) {
-	notifyTask <- msg
+func Notify(b *model.Build) {
+	notifyTask <- b
 }

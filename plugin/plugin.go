@@ -7,8 +7,7 @@ import (
 	"github.com/drone/drone-go/plugin/webhook"
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/zlyuancn/drone-build-notify/approval"
-	"github.com/zlyuancn/drone-build-notify/config"
+	"github.com/zlyuancn/drone-build-notify/build"
 	"github.com/zlyuancn/drone-build-notify/logger"
 	"github.com/zlyuancn/drone-build-notify/model"
 	"github.com/zlyuancn/drone-build-notify/notifer"
@@ -28,24 +27,20 @@ func (p *plugin) Deliver(ctx context.Context, req *webhook.Request) error {
 		return nil
 	}
 
-	msg, err := model.MakeMsg(req)
+	b, err := build.MakeBuild(req)
 	if err != nil {
 		logger.Log.Error(err)
+		return err
 	}
 
-	// 如果是 开始 并且 对某些分支使用了审批
-	if msg.Status == "start" && config.Config.UseApprovalBranch != "" {
-		if !msg.MatchApprovalBranches() {
-			err := approval.Approval(msg.RepoName, msg.TaskNum, true)
-			if err != nil {
-				logger.Log.Errorf("自动审批不匹配的分支失败: %v", err)
-			}
-		}
-	}
+	buildText, _ := jsoniter.MarshalIndent(b, "", "    ")
+	logger.Log.Debug("build:\n", string(buildText))
 
-	msgText, _ := jsoniter.MarshalIndent(msg, "", "    ")
-	logger.Log.Debug("通告msg:\n", string(msgText))
-	notifer.Notify(msg)
+	notifer.Notify(b)
+
+	if b.BuildStatus == model.BuildEnd || b.BuildStatus == model.BuildApprovalTimeout {
+		b.Done() <- struct{}{}
+	}
 	return nil
 }
 

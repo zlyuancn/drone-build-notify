@@ -16,7 +16,6 @@ import (
 	"github.com/zlyuancn/zdingtalk/robot"
 	"github.com/zlyuancn/zstr"
 
-	"github.com/zlyuancn/drone-build-notify/approval"
 	"github.com/zlyuancn/drone-build-notify/config"
 	"github.com/zlyuancn/drone-build-notify/logger"
 	"github.com/zlyuancn/drone-build-notify/model"
@@ -63,44 +62,43 @@ func (m *DingtalkNotifer) Name() NotifierType {
 	return DingtalkNotifier
 }
 
-func (m *DingtalkNotifer) Notify(msg *model.Msg) error {
+func (m *DingtalkNotifer) Notify(b *model.Build) error {
 	if m.dt == nil {
 		return errors.New("未创建DingTalk实例")
 	}
-	return m.dt.Send(m.makeDingtalkMsg(msg), config.Config.NotifyRetry)
+	return m.dt.Send(m.makeDingtalkMsg(b), config.Config.NotifyRetry)
 }
 
-func (m *DingtalkNotifer) makeDingtalkMsg(msg *model.Msg) *robot.Msg {
-	title := fmt.Sprintf("[%s] #%d %s", msg.StatusDesc, msg.TaskNum, msg.RepoName)
-	text := m.makeContext(msg)
+func (m *DingtalkNotifer) makeDingtalkMsg(b *model.Build) *robot.Msg {
+	title := fmt.Sprintf("[%s] #%d %s", b.Msg.StatusDesc, b.Msg.TaskNum, b.Msg.RepoName)
+	text := m.makeContext(b.Msg)
 	buttons := []robot.Button{
 		{
 			Title:     "更改记录",
-			ActionURL: msg.CommitUrl,
+			ActionURL: b.Msg.CommitUrl,
 		},
 		{
 			Title:     "任务构建信息",
-			ActionURL: msg.TaskUrl,
+			ActionURL: b.Msg.TaskUrl,
 		},
 	}
 
-	if msg.Status == "start" && msg.MatchApprovalBranches() {
-		approval := approval.NewApproval(msg.RepoName, msg.TaskNum)
-		const ApprovalUrl = `{@endpoint}/approval?approval_id={@approval_id}&verify_code={@verify_code}&allow={@allow}`
+	if b.BuildStatus == model.BuildWaitApproval {
+		const ApprovalUrl = `{@endpoint}/approval?build_id={@build_id}&verify_code={@verify_code}&allow={@allow}`
 		buttons = append(buttons, robot.Button{
 			Title: "允许构建",
 			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
 				"endpoint":    config.Config.AdvertiseAddress,
-				"approval_id": approval.ID(),
-				"verify_code": approval.VerifyCode(),
+				"build_id":    b.ID,
+				"verify_code": b.Approval.VerifyCode,
 				"allow":       "true",
 			}),
 		}, robot.Button{
 			Title: "取消构建",
 			ActionURL: zstr.Render(ApprovalUrl, map[string]interface{}{
 				"endpoint":    config.Config.AdvertiseAddress,
-				"approval_id": approval.ID(),
-				"verify_code": approval.VerifyCode(),
+				"build_id":    b.ID,
+				"verify_code": b.Approval.VerifyCode,
 				"allow":       "false",
 			}),
 		})
@@ -109,7 +107,7 @@ func (m *DingtalkNotifer) makeDingtalkMsg(msg *model.Msg) *robot.Msg {
 }
 
 func (m *DingtalkNotifer) makeContext(msg *model.Msg) string {
-	if msg.Status == "start" {
+	if msg.Status == model.MsgStart {
 		return template.Render(dingtalkStartTemplate, msg)
 	}
 	return template.Render(dingtalkEndTemplate, msg)

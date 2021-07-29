@@ -24,6 +24,17 @@ import (
 
 const TimeLayout = "2006-01-02 15:04:05"
 
+type MsgStatus string
+
+const (
+	MsgStart           MsgStatus = "start"
+	MsgSuccess         MsgStatus = "success"
+	MsgApprovalTimeout MsgStatus = "approval_timeout"
+	MsgFailing         MsgStatus = "failure"
+	MsgKilled          MsgStatus = "killed"
+	MsgError           MsgStatus = "error"
+)
+
 type Msg struct {
 	TaskNum  string `json:"task_num"`  // 任务号
 	TaskUrl  string `json:"task_url"`  // 任务跳转url
@@ -35,9 +46,9 @@ type Msg struct {
 	AutherEmail  string `json:"auther_email"`  // 操作人员邮箱
 	AutherAvatar string `json:"auther_avatar"` // 操作人员头像
 
-	Status       string `json:"status"`         // 执行结果
-	StatusDesc   string `json:"status_desc"`    // 执行结果描述
-	StatusPicUrl string `json:"status_pic_url"` // 执行结果图片url
+	Status       MsgStatus `json:"status"`         // 执行结果
+	StatusDesc   string    `json:"status_desc"`    // 执行结果描述
+	StatusPicUrl string    `json:"status_pic_url"` // 执行结果图片url
 
 	StartTime   string `json:"start_time"`   // 开始时间
 	EndTime     string `json:"end_time"`     // 结束时间
@@ -98,21 +109,21 @@ func MakeMsg(req *webhook.Request) (*Msg, error) {
 		processTime = (time.Duration(build.Finished-build.Created) * time.Second).String()
 	}
 
-	status := "start"
+	msgStatus := MsgStart
 	statusDesc := "开始"
 	if req.Action != webhook.ActionCreated {
 		switch req.Build.Status {
 		case drone.StatusPassing:
-			status = "success"
+			msgStatus = MsgSuccess
 			statusDesc = "完成"
 		case drone.StatusFailing:
-			status = "failure"
+			msgStatus = MsgFailing
 			statusDesc = "失败"
 		case drone.StatusKilled:
-			status = "killed"
+			msgStatus = MsgKilled
 			statusDesc = "删除"
 		case drone.StatusError:
-			status = "error"
+			msgStatus = MsgError
 			statusDesc = "错误"
 		}
 	}
@@ -125,9 +136,9 @@ func MakeMsg(req *webhook.Request) (*Msg, error) {
 		Auther:       build.AuthorName,
 		AutherEmail:  build.AuthorEmail,
 		AutherAvatar: build.AuthorAvatar,
-		Status:       status,
+		Status:       msgStatus,
 		StatusDesc:   statusDesc,
-		StatusPicUrl: makeStatusPicUrl(status),
+		StatusPicUrl: makeStatusPicUrl(msgStatus),
 		StartTime:    startTime,
 		EndTime:      endTime,
 		ProcessTime:  processTime,
@@ -202,6 +213,6 @@ func makeTaskUrl(slug string, taskId int64) string {
 }
 
 // 构建状态图片url
-func makeStatusPicUrl(status string) string {
+func makeStatusPicUrl(status MsgStatus) string {
 	return makeResUrl("https://github.com/zlyuancn/drone-build-notify.git", "master", fmt.Sprintf("assets/%s.png", status))
 }
